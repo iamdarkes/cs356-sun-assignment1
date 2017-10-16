@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class IVoteQuestion implements Question {
 
     private String questionText;
@@ -11,12 +14,12 @@ public class IVoteQuestion implements Question {
         this.candidateAnswers = new CandidateAnswer[choiceCount];
     }
 
+
     public IVoteQuestion(String questionText, CandidateAnswer[] candidateAnswers) {
         this.questionText = questionText;
         this.choiceCount = candidateAnswers.length;
         this.candidateAnswers = candidateAnswers;
     }
-
 
 
 
@@ -57,18 +60,19 @@ public class IVoteQuestion implements Question {
         return choiceCount;
     }
 
-    public int[] getCorrectAnswer() {
-
+    public List<CandidateAnswer> getCorrectAnswer() {
+        //CandidateAnswer[] correctCandidateAnswers = new CandidateAnswer[candidateAnswers.length];
+        List<CandidateAnswer> correctCandidateAnswers = new ArrayList<>();
         if(candidateAnswers != null) {
             for(int i =0; i < candidateAnswers.length; i++) {
-                //if(candidateAnswers[i] == )
+                if(candidateAnswers[i].isCorrect() == true) {
+                    correctCandidateAnswers.add(candidateAnswers[i]);
+                }
             }
         } else {
-            int[] noAnswer = new int[1];
-            noAnswer[0] = -1;
-            return noAnswer;
+            return null;
         }
-        return null;
+        return correctCandidateAnswers;
     }
 
 }
