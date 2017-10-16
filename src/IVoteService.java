@@ -6,11 +6,8 @@ public class IVoteService implements Service {
     private Map<CandidateAnswer, Integer> submissions;
     private Map<Student, Integer> entry;
     private int studentResponseCount;
-    //private int[] candidateAnswerResponseCount;
-
     private int questionType;
     private CandidateAnswer[] candidateAnswers;
-
 
 
     public IVoteService(int questionType, CandidateAnswer[] candidateAnswers) {
@@ -23,8 +20,6 @@ public class IVoteService implements Service {
         studentResponseCount = 0;
         entry = new HashMap<>();
     }
-
-
 
     public void addResponse(Student student) {
 
@@ -57,7 +52,11 @@ public class IVoteService implements Service {
         return studentResponseCount;
     }
 
-    public void generate() {
+    public int getQuestionType() {
+        return questionType;
+    }
 
+    public void setQuestionType(int questionType) {
+        this.questionType = questionType;
     }
 }

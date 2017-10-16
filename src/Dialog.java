@@ -1,5 +1,6 @@
 public interface Dialog {
-    void introduction();
-    void finish();
+
+    String introduction();
+    String finish();
 
 }

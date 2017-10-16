@@ -8,11 +8,6 @@ public class CandidateAnswer implements Answer {
         this.correct = correct;
     }
 
-
-    public String getAnswer() {
-        return answer;
-    }
-
     public void setAnswer(String answer) {
         this.answer = answer;
     }
@@ -23,5 +18,10 @@ public class CandidateAnswer implements Answer {
 
     public void setCorrect(boolean correct) {
         this.correct = correct;
+    }
+
+    @Override
+    public String getAnswer() {
+        return answer;
     }
 }

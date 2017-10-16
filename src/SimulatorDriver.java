@@ -2,139 +2,150 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class SimulatorDriver implements Driver{
+public class SimulatorDriver implements Driver {
 
     private static final int STUDENT_AMOUNT = 15;
-    private static final int QUESTION_AMOUNT = 10;
+    private static final int QUESTION_AMOUNT = 3;
 
     public static void main(String[] args) {
-        IVoteQuestion[] questions = new IVoteQuestion[3];
-
-        CandidateAnswer[] candidateAnswers1 = new CandidateAnswer[4];
-        CandidateAnswer[] candidateAnswers2 = new CandidateAnswer[4];
-        CandidateAnswer[] candidateAnswers3 = new CandidateAnswer[4];
-        CandidateAnswer[] candidateAnswers4 = new CandidateAnswer[12];
-        candidateAnswers1[0] = new CandidateAnswer("Blue", true);
-        candidateAnswers1[1] = new CandidateAnswer("Black", false);
-        candidateAnswers1[2] = new CandidateAnswer("Brown", false);
-        candidateAnswers1[3] = new CandidateAnswer("Orange", false);
-        candidateAnswers2[0] = new CandidateAnswer("No", false);
-        candidateAnswers2[1] = new CandidateAnswer("Maybe", false);
-        candidateAnswers2[2] = new CandidateAnswer("meow", false);
-        candidateAnswers2[3] = new CandidateAnswer("affirmative", true);
-        candidateAnswers3[0] = new CandidateAnswer("cow", false);
-        candidateAnswers3[1] = new CandidateAnswer("test", false);
-        candidateAnswers3[2] = new CandidateAnswer("bark", true);
-        candidateAnswers3[3] = new CandidateAnswer("weesnaw", false);
-
-        candidateAnswers4[0] = new CandidateAnswer("Blue", true);
-        candidateAnswers4[1] = new CandidateAnswer("Black", false);
-        candidateAnswers4[2] = new CandidateAnswer("Brown", false);
-        candidateAnswers4[3] = new CandidateAnswer("Orange", false);
-        candidateAnswers4[4] = new CandidateAnswer("No", false);
-        candidateAnswers4[5] = new CandidateAnswer("Maybe", false);
-        candidateAnswers4[6] = new CandidateAnswer("meow", false);
-        candidateAnswers4[7] = new CandidateAnswer("affirmative", true);
-        candidateAnswers4[8] = new CandidateAnswer("cow", false);
-        candidateAnswers4[9] = new CandidateAnswer("test", false);
-        candidateAnswers4[10] = new CandidateAnswer("bark", true);
-        candidateAnswers4[11] = new CandidateAnswer("weesnaw", false);
+        //runRandomSimulation();
+        runEveryQuestionSimulation();
+    }
 
 
-        questions[0] = new IVoteQuestion("what is color of sky", candidateAnswers1);
-        questions[1] = new IVoteQuestion("answer is affirmative", candidateAnswers2);
-        questions[2] = new IVoteQuestion("sound of doggo", candidateAnswers3);
+    /**
+     * makes sure to go through every question once
+     */
+    public static void runEveryQuestionSimulation() {
+        System.out.println(new IVoteDialog().introduction());
 
+        for (int j = 0; j < QUESTION_AMOUNT; j++) {
+            Student[] students = generateStudents();
+            String[] questions = {IVoteDialog.QUESTION_1, IVoteDialog.QUESTION_2, IVoteDialog.QUESTION_3};
+            List<String[]> ca = new ArrayList<>();
+            ca.add(IVoteDialog.CANDIDATE_ANSWERS_1);
+            ca.add(IVoteDialog.CANDIDATE_ANSWERS_2);
+            ca.add(IVoteDialog.CANDIDATE_ANSWERS_3);
+            System.out.println(IVoteDialog.SCQ_OR_MCQ);
+            Random random = new Random();
+            int type = random.nextInt(2);
+            System.out.println(IVoteDialog.GENERATED_VALUE + type);
+            System.out.println(IVoteDialog.ENTER_QUESTION);
+            //int rand = random.nextInt(3);
+            String questionText = questions[j];
+            System.out.println(IVoteDialog.GENERATED_VALUE + questionText);
+            System.out.println(IVoteDialog.ENTER_CANDIDATE_ANSWERS);
+            int answerCount = random.nextInt(5 - 2) + 2;
+            System.out.println(IVoteDialog.GENERATED_VALUE + answerCount);
+            CandidateAnswer[] candidateAnswers = new CandidateAnswer[answerCount];
+            for (int i = 0; i < answerCount; i++) {
+                //System.out.println("Enter candidate answer: ");
+                //System.out.println("Randomly generated submission: " + ca1[i]);
+                //System.out.println("Is the candidate answer correct? ");
+                int correct = random.nextInt(2);
+                CandidateAnswer candidateAnswer = new CandidateAnswer(ca.get(j)[i], correct == 1);
+                candidateAnswers[i] = candidateAnswer;
+                System.out.println(IVoteDialog.GENERATED_VALUE + candidateAnswer.getAnswer() + " : " + candidateAnswer.isCorrect());
+
+            }
+            IVoteQuestion question = new IVoteQuestion(questionText, type);
+            question.setCandidateAnswers(candidateAnswers);
+            IVoteService iVoteService = new IVoteService(type, candidateAnswers);
+            System.out.println(IVoteDialog.STUDENTS_SUBMITTING);
+            submitAnswers(students, question, answerCount, random, iVoteService);
+            System.out.println(IVoteDialog.RESULTS);
+            System.out.println(iVoteService.displayStatistics());
+            System.out.println(new IVoteDialog().finish());
+        }
+
+    }
+
+    /**
+     * Simulate truly random simulation.
+     */
+    public static void runRandomSimulation() {
         Student[] students = generateStudents();
 
-
-        String[] questionText = {"What is the color of the sky?", "What animal makes the noise \"bark\"?", "Who was the first president of the United States?"};
-        String[] ca1 = {"Blue", "Red", "Brown", "Green", "Yellow"};
-        String[] ca2 = {"Cat", "Dog", "Mouse", "Lamb", "Moose"};
-        String[] ca3 = {"George Washington", "Thomas Jefferson", "Alexander Hamilton", "Benjamin Franklin", "John Adams"};
+        String[] questions = {IVoteDialog.QUESTION_1, IVoteDialog.QUESTION_2, IVoteDialog.QUESTION_3};
         List<String[]> ca = new ArrayList<>();
-        ca.add(ca1);
-        ca.add(ca2);
-        ca.add(ca3);
+        ca.add(IVoteDialog.CANDIDATE_ANSWERS_1);
+        ca.add(IVoteDialog.CANDIDATE_ANSWERS_2);
+        ca.add(IVoteDialog.CANDIDATE_ANSWERS_3);
 
-
-        System.out.println("Welcome to the iVote Simulator");
-        System.out.println("Enter a question type: 0) SCQ 1) MCQ");
+        System.out.println(new IVoteDialog().introduction());
+        System.out.println(IVoteDialog.SCQ_OR_MCQ);
         Random random = new Random();
         int type = random.nextInt(2);
-        System.out.println("Randomly generated submission: " + type);
-        System.out.println("Enter a question: ");
-        int q = random.nextInt(3);
-        String questionT = questionText[q];
-        System.out.println("Randomly generated submission: " + questionT);
-        System.out.println("Enter how many candidate answers: ");
+        System.out.println(IVoteDialog.GENERATED_VALUE + type);
+        System.out.println(IVoteDialog.ENTER_QUESTION);
+        int rand = random.nextInt(3);
+        String questionText = questions[rand];
+        System.out.println(IVoteDialog.GENERATED_VALUE + questionText);
+        System.out.println(IVoteDialog.ENTER_CANDIDATE_ANSWERS);
         int answerCount = random.nextInt(5 - 2) + 2;
-        System.out.println("Randomly generated submission: "  + answerCount);
+        System.out.println(IVoteDialog.GENERATED_VALUE + answerCount);
         CandidateAnswer[] candidateAnswers = new CandidateAnswer[answerCount];
-        for(int i = 0; i < answerCount; i++) {
+        for (int i = 0; i < answerCount; i++) {
             //System.out.println("Enter candidate answer: ");
             //System.out.println("Randomly generated submission: " + ca1[i]);
             //System.out.println("Is the candidate answer correct? ");
             int correct = random.nextInt(2);
-            CandidateAnswer candidateAnswer = new CandidateAnswer(ca.get(q)[i], correct == 1);
+            CandidateAnswer candidateAnswer = new CandidateAnswer(ca.get(rand)[i], correct == 1);
             candidateAnswers[i] = candidateAnswer;
-            System.out.println("Randomly generated submission: " + candidateAnswer.getAnswer() + " : " + candidateAnswer.isCorrect());
+            System.out.println(IVoteDialog.GENERATED_VALUE + candidateAnswer.getAnswer() + " : " + candidateAnswer.isCorrect());
 
         }
-        IVoteQuestion question = new IVoteQuestion(questionT, type);
+        IVoteQuestion question = new IVoteQuestion(questionText, type);
         question.setCandidateAnswers(candidateAnswers);
+        IVoteService iVoteService = new IVoteService(type, candidateAnswers);
+        System.out.println(IVoteDialog.STUDENTS_SUBMITTING);
+        submitAnswers(students, question, answerCount, random, iVoteService);
+        System.out.println(IVoteDialog.RESULTS);
+        System.out.println(iVoteService.displayStatistics());
+        System.out.println(new IVoteDialog().finish());
+    }
 
-
-
-        IVoteService ivote = new IVoteService(type, candidateAnswers);
-
-        System.out.println("Students submitting results...");
-        if(type == 0) {
+    /**
+     * Take input and calculate results for IVoteService
+     *
+     * @param students     array of students
+     * @param question     IVoteQuestion that has been asked
+     * @param answerCount  how many candidate answers there are
+     * @param random       next random number
+     * @param iVoteService service for current question
+     */
+    public static void submitAnswers(Student[] students, IVoteQuestion question, int answerCount, Random random, IVoteService iVoteService) {
+        if (iVoteService.getQuestionType() == 0) {
+            //have students answer once if SCQ
             for (int i = 0; i < students.length; i++) {
                 CandidateAnswer[] ans = question.getCandidateAnswers();
                 students[i].addAnswer(ans[random.nextInt(answerCount)]);
-                ivote.addResponse(students[i]);
+                iVoteService.addResponse(students[i]);
             }
         } else {
+            //have students answer twice if MCQ
             for (int i = 0; i < students.length; i++) {
                 CandidateAnswer[] ans = question.getCandidateAnswers();
                 students[i].addAnswer(ans[random.nextInt(answerCount)]);
                 students[i].addAnswer(ans[random.nextInt(answerCount)]);
-                ivote.addResponse(students[i]);
+                iVoteService.addResponse(students[i]);
             }
 
         }
-        System.out.println("---Results---");
-        System.out.println(ivote.displayStatistics());
-
-
-
-
     }
 
-    @Override
-    public void run() {
-
-    }
-
+    /**
+     * Make an array of unique students based on STUDENT_AMOUNT constant
+     *
+     * @return populated student array
+     */
     public static Student[] generateStudents() {
         Student[] students = new Student[STUDENT_AMOUNT];
-        for(int i =0; i < students.length; i++) {
+        for (int i = 0; i < students.length; i++) {
             students[i] = new Student();
             //System.out.println(students[i].getUUID());
         }
-
         return students;
     }
 
-    public Question[] generateQuestions() {
-        Question[] questions = new Question[QUESTION_AMOUNT];
-
-        for(int i =0; i < questions.length; i++) {
-            //questions[i] = new Question
-        }
-
-
-        return questions;
-    }
 }
